@@ -1,7 +1,7 @@
 @echo off
-REM		Build Script
+::		Build Script
 
-REM Set Compiler Settings Here
+:: Set Compiler Settings Here
 
 cls
 
@@ -16,7 +16,7 @@ set VERBOSE=0
 set ASYNC_BUILD=1
 
 set COMPILER_FLAGS=-std=c++20
-set ADDITIONAL_LIBRARIES=-static-libstdc++ -static -lfreedialog -lgdi32
+set ADDITIONAL_LIBRARIES=-static-libstdc++ -lfreedialog -luser32 -lgdi32 -lcomdlg32
 set ADDITIONAL_LIBDIRS=-L.
 set ADDITIONAL_INCLUDEDIRS=-I.
 
@@ -73,7 +73,7 @@ if %count%==0 (
 :linker
 
 set "files="
-for /f "delims=" %%A in ('dir /b /a-d ".objs64\%*" ') do set "files=!files! .objs64\%%A"
+for /f "delims=" %%A in ('dir /b /a-d ".objs64\*.o" ') do set "files=!files! .objs64\%%A"
 
 :link
 echo Linking Executable...

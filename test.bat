@@ -2,15 +2,13 @@
 ::		Build Script
 
 :: Set Compiler Settings Here
-:: This library is dependent on the following libraries: user32 gdi32 comdlg32
 
 cls
 
 set CPP=c++
 set GPP=g++
-set AR=ar
-set OUTPUT=libfreedialog.a
-set DEBUGMODE=0
+set OUTPUT=program.exe
+set DEBUGMODE=1
 
 set LINK_ONLY=0
 set VERBOSE=0
@@ -18,7 +16,9 @@ set VERBOSE=0
 set ASYNC_BUILD=1
 
 set COMPILER_FLAGS=-std=c++20
-set ADDITIONAL_INCLUDEDIRS=
+set ADDITIONAL_LIBRARIES=-static-libstdc++ -luser32 -lgdi32 -lcomdlg32
+set ADDITIONAL_LIBDIRS=-L.
+set ADDITIONAL_INCLUDEDIRS=-I.
 
 del %OUTPUT% 2>nul
 
@@ -48,8 +48,20 @@ if not exist .objs64 (
 	mkdir .objs64
 )
 
-echo Building API Files...
+echo Building Library Files...
 for %%F in (*.cpp) do (
+	if not exist .objs64\%%~nF.o (
+		echo Building %%~nF.o
+		start /B %WAIT% "%%~nF.o" %CPP% %ADDITIONAL_INCLUDEDIRS% %COMPILER_FLAGS% %DEBUG_INFO% -c %%F -o .objs64\%%~nF.o
+
+		if %VERBOSE% GTR 0 (
+			echo %CPP% %ADDITIONAL_INCLUDEDIRS% %COMPILER_FLAGS% %DEBUG_INFO% -c %%F -o .objs64\%%~nF.o
+		)
+	)
+)
+
+echo Building Example Files...
+for %%F in (example\*.cpp) do (
 	if not exist .objs64\%%~nF.o (
 		echo Building %%~nF.o
 		start /B %WAIT% "%%~nF.o" %CPP% %ADDITIONAL_INCLUDEDIRS% %COMPILER_FLAGS% %DEBUG_INFO% -c %%F -o .objs64\%%~nF.o
@@ -73,7 +85,7 @@ if %count%==0 (
 :linker
 
 set "files="
-for /f "delims=" %%A in ('dir /b /a-d ".objs64\%*" ') do set "files=!files! .objs64\%%A"
+for /f "delims=" %%A in ('dir /b /a-d ".objs64\*.o" ') do set "files=!files! .objs64\%%A"
 
 :link
 echo Linking Executable...
@@ -85,14 +97,15 @@ if %DEBUGMODE% GTR 0 (
 )
 
 if %VERBOSE% GTR 0 (
-	echo %AR% rvs %OUTPUT% %files%
+	echo %GPP% %ADDITIONAL_LIBDIRS% -o %OUTPUT% %files% %ADDITIONAL_LIBRARIES% %MWINDOWS%
 )
 
-%AR% rvs %OUTPUT% %files%
+%GPP% %ADDITIONAL_LIBDIRS% -o %OUTPUT% %files% %ADDITIONAL_LIBRARIES% %MWINDOWS%
 
 :finish
 if exist .\%OUTPUT% (
 	echo Build Success!
+	%OUTPUT%
 ) else (
 	echo Build Failed!
 )
