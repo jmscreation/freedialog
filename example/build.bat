@@ -7,7 +7,7 @@ cls
 
 set CPP=c++
 set GPP=g++
-set OUTPUT=program.exe
+set OUTPUT=example.exe
 set DEBUGMODE=1
 
 set LINK_ONLY=0
@@ -16,9 +16,9 @@ set VERBOSE=0
 set ASYNC_BUILD=1
 
 set COMPILER_FLAGS=-std=c++20
-set ADDITIONAL_LIBRARIES=-static-libstdc++ -luser32 -lgdi32 -lcomdlg32
-set ADDITIONAL_LIBDIRS=-L.
-set ADDITIONAL_INCLUDEDIRS=-I.
+set ADDITIONAL_LIBRARIES=-static-libstdc++ -lfreedialog -luser32 -lgdi32 -lcomdlg32
+set ADDITIONAL_LIBDIRS=-L..\lib
+set ADDITIONAL_INCLUDEDIRS=-I..\include
 
 del %OUTPUT% 2>nul
 
@@ -48,20 +48,8 @@ if not exist .objs64 (
 	mkdir .objs64
 )
 
-echo Building Library Files...
-for %%F in (*.cpp) do (
-	if not exist .objs64\%%~nF.o (
-		echo Building %%~nF.o
-		start /B %WAIT% "%%~nF.o" %CPP% %ADDITIONAL_INCLUDEDIRS% %COMPILER_FLAGS% %DEBUG_INFO% -c %%F -o .objs64\%%~nF.o
-
-		if %VERBOSE% GTR 0 (
-			echo %CPP% %ADDITIONAL_INCLUDEDIRS% %COMPILER_FLAGS% %DEBUG_INFO% -c %%F -o .objs64\%%~nF.o
-		)
-	)
-)
-
 echo Building Example Files...
-for %%F in (example\*.cpp) do (
+for %%F in (*.cpp) do (
 	if not exist .objs64\%%~nF.o (
 		echo Building %%~nF.o
 		start /B %WAIT% "%%~nF.o" %CPP% %ADDITIONAL_INCLUDEDIRS% %COMPILER_FLAGS% %DEBUG_INFO% -c %%F -o .objs64\%%~nF.o
@@ -105,7 +93,6 @@ if %VERBOSE% GTR 0 (
 :finish
 if exist .\%OUTPUT% (
 	echo Build Success!
-	%OUTPUT%
 ) else (
 	echo Build Failed!
 )
