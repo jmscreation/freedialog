@@ -17,7 +17,7 @@ set ASYNC_BUILD=1
 
 set COMPILER_FLAGS=-std=c++20
 set ADDITIONAL_LIBRARIES=-static-libstdc++ -lfreedialog -luser32 -lgdi32 -lcomdlg32
-set ADDITIONAL_LIBDIRS=-L..\lib
+set ADDITIONAL_LIBDIRS=-L..\lib\windows
 set ADDITIONAL_INCLUDEDIRS=-I..\include
 
 del %OUTPUT% 2>nul
