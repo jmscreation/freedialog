@@ -200,7 +200,7 @@ namespace freedialog {
 
         char* buf = new char[len];
         GetDlgItemText(hWnd, ID_INPUT_FIELD_1, buf, len);
-        results[0].assign(buf, len);
+        results[0].assign(buf, len - 1); // do not include null character
         delete[] buf;
 
         userAbort = false;
